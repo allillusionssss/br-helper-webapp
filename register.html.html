@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Регистрация</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <div class="logo">
+            <h1>BLACK <span>RUSSIA</span></h1>
+            <p>♦ РЕГИСТРАЦИЯ АККАУНТА ♦</p>
+        </div>
+
+        <div class="input-group">
+            <span class="icon">👤</span>
+            <input type="text" id="nick" placeholder="Ник нового аккаунта">
+        </div>
+        <div class="input-group">
+            <span class="icon">🔒</span>
+            <input type="password" id="password" placeholder="Придумайте пароль">
+        </div>
+        <div class="input-group">
+            <span class="icon">🛡️</span>
+            <input type="text" id="pin" placeholder="ПИН-код (если есть)">
+        </div>
+        <div class="input-group">
+            <span class="icon">📧</span>
+            <input type="email" id="email" placeholder="example@mail.ru">
+        </div>
+
+        <div class="server-select">
+            <label>ВЫБОР СЕРВЕРА</label>
+            <select id="server">
+                <option>01 | RED</option>
+                <option>02 | GREEN</option>
+                <option>03 | BLUE</option>
+                <option>04 | YELLOW</option>
+                <option>05 | ORANGE</option>
+                <option>06 | PURPLE</option>
+                <option>07 | LIME</option>
+                <option>08 | PINK</option>
+                <option>09 | CHERRY</option>
+                <option>10 | BLACK</option>
+                <option>11 | INDIGO</option>
+                <option>12 | WHITE</option>
+                <option>13 | MAGENTA</option>
+                <option>14 | CRIMSON</option>
+                <option>15 | GOLD</option>
+                <option>16 | AZURE</option>
+                <option>17 | PLATINUM</option>
+                <option>18 | AQUA</option>
+                <option>19 | GRAY</option>
+                <option>20 | ICE</option>
+                <option>21 | CHILLI</option>
+                <option>22 | CHOCO</option>
+                <option>23 | MOSCOW</option>
+                <option>24 | SPB</option>
+                <option>25 | UFA</option>
+                <option>26 | SOCHI</option>
+                <option>27 | KAZAN</option>
+                <option>28 | SAMARA</option>
+                <option>29 | ROSTOV</option>
+                <option>30 | ANAPA</option>
+                <option>31 | EKB</option>
+                <option>32 | KRASNODAR</option>
+                <option>33 | ARZAMAS</option>
+                <option>34 | NOVOSIB</option>
+                <option>35 | GROZNY</option>
+                <option>36 | SARATOV</option>
+                <option>37 | OMSK</option>
+                <option>38 | IRKUTSK</option>
+                <option>39 | VOLGOGRAD</option>
+                <option>40 | VORONEZH</option>
+                <option>41 | BELGOROD</option>
+                <option>42 | MAKHACHKALA</option>
+                <option>43 | VLADIKAVKAZ</option>
+                <option>44 | VLADIVOSTOK</option>
+                <option>45 | KALININGRAD</option>
+                <option>46 | CHELYABINSK</option>
+                <option>47 | KRASNOYARSK</option>
+                <option>48 | CHEBOKSARY</option>
+                <option>49 | KHABAROVSK</option>
+                <option>50 | PERM</option>
+                <option>51 | TULA</option>
+                <option>52 | RYAZAN</option>
+                <option>53 | MURMANSK</option>
+                <option>54 | PENZA</option>
+                <option>55 | KURSK</option>
+                <option>56 | ARKHANGELSK</option>
+                <option>57 | ORENBURG</option>
+                <option>58 | KIROV</option>
+                <option>59 | KEMEROVO</option>
+                <option>60 | TYUMEN</option>
+                <option>61 | TOLYATTI</option>
+                <option>62 | IVANOVO</option>
+                <option>63 | STAVROPOL</option>
+                <option>64 | SMOLENSK</option>
+                <option>65 | PSKOV</option>
+                <option>66 | BRYANSK</option>
+                <option>67 | OREL</option>
+                <option>68 | YAROSLAVL</option>
+                <option>69 | BARNAUL</option>
+                <option>70 | LIPETSK</option>
+                <option>71 | ULYANOVSK</option>
+                <option>72 | YAKUTSK</option>
+                <option>73 | TAMBOV</option>
+                <option>74 | BRATSK</option>
+                <option>75 | ASTRAKHAN</option>
+                <option>76 | CHITA</option>
+                <option>77 | KOSTROMA</option>
+                <option>78 | VLADIMIR</option>
+                <option>79 | KALUGA</option>
+                <option>80 | NOVGOROD</option>
+                <option>81 | TAGANROG</option>
+                <option>82 | VOLOGDA</option>
+                <option>83 | TVER</option>
+                <option>84 | TOMSK</option>
+                <option>85 | IZHEVSK</option>
+                <option>86 | SURGUT</option>
+                <option>87 | PODOLSK</option>
+                <option>88 | MAGADAN</option>
+                <option>89 | CHEREPOVETS</option>
+                <option>90 | NORILSK</option>
+                <option>91 | ASTANA</option>
+            </select>
+        </div>
+
+        <div class="input-group">
+            <span class="icon">👥</span>
+            <input type="text" id="referrer" placeholder="Ник пригласившего (необязательно)">
+        </div>
+
+        <button onclick="register()">СОЗДАТЬ АККАУНТ →</button>
+        <button class="secondary" onclick="goTo('index.html')">← ВЕРНУТЬСЯ К ВХОДУ</button>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
