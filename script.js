@@ -221,3 +221,19 @@ function recover() {
         });
     });
 }
+
+// === ВЫПАДАЮЩИЙ СПИСОК СЕРВЕРОВ ===
+function toggleServerList() {
+    const dropdown = document.getElementById('serverDropdown');
+    if (dropdown) {
+        dropdown.classList.toggle('active');
+    }
+}
+
+function selectServer(value) {
+    const valueEl = document.getElementById('serverValue');
+    const hiddenInput = document.getElementById('server');
+    if (valueEl) valueEl.textContent = value;
+    if (hiddenInput) hiddenInput.value = value;
+    toggleServerList();
+}
