@@ -11,7 +11,7 @@
 
     <div id="loader" class="loader-screen">
         <div class="loader-circle"></div>
-        <div class="loader-text">ПОДКЛЮЧЕНИЕ К СЕРВЕРУ...</div>
+        <div class="loader-text">ПОДКЛЮЧЕНИЕ К СЕРВЕРУ</div>
         <div class="loader-percent" id="percent">0%</div>
         <div class="loader-bar">
             <div class="loader-bar-fill" id="bar"></div>
@@ -26,7 +26,9 @@
         </div>
 
         <div class="input-group">
-            <div class="icon red" id="iconNick">👤</div>
+            <div class="icon red" id="iconNick">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            </div>
             <div class="field">
                 <label>НИК</label>
                 <input type="text" id="nick" placeholder="Введите игровой ник" oninput="onlyEnglish(this)">
@@ -34,7 +36,9 @@
         </div>
 
         <div class="input-group">
-            <div class="icon red" id="iconPass">🔒</div>
+            <div class="icon red" id="iconPass">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+            </div>
             <div class="field">
                 <label>ПАРОЛЬ</label>
                 <input type="password" id="password" placeholder="Введите пароль" oninput="onlyEnglish(this)">
@@ -42,7 +46,9 @@
         </div>
 
         <div class="input-group pin-group disabled" id="pinGroup">
-            <div class="icon dark" id="iconPin">🛡️</div>
+            <div class="icon dark" id="iconPin">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+            </div>
             <div class="field">
                 <label>ПИН-КОД</label>
                 <input type="text" id="pin" placeholder="Пин-код отключён" disabled oninput="onlyPin(this)">
@@ -53,118 +59,35 @@
             </label>
         </div>
 
-        <div class="input-group server-group">
-            <div class="icon green">☰</div>
+        <div class="input-group server-group" onclick="toggleServerList()">
+            <div class="icon green">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+            </div>
             <div class="field">
                 <label>ВЫБОР СЕРВЕРА</label>
-                <select id="server">
-                    <option>01 | RED</option>
-                    <option>02 | GREEN</option>
-                    <option>03 | BLUE</option>
-                    <option>04 | YELLOW</option>
-                    <option>05 | ORANGE</option>
-                    <option>06 | PURPLE</option>
-                    <option>07 | LIME</option>
-                    <option>08 | PINK</option>
-                    <option>09 | CHERRY</option>
-                    <option>10 | BLACK</option>
-                    <option>11 | INDIGO</option>
-                    <option>12 | WHITE</option>
-                    <option>13 | MAGENTA</option>
-                    <option>14 | CRIMSON</option>
-                    <option>15 | GOLD</option>
-                    <option>16 | AZURE</option>
-                    <option>17 | PLATINUM</option>
-                    <option>18 | AQUA</option>
-                    <option>19 | GRAY</option>
-                    <option>20 | ICE</option>
-                    <option>21 | CHILLI</option>
-                    <option>22 | CHOCO</option>
-                    <option>23 | MOSCOW</option>
-                    <option>24 | SPB</option>
-                    <option>25 | UFA</option>
-                    <option>26 | SOCHI</option>
-                    <option>27 | KAZAN</option>
-                    <option>28 | SAMARA</option>
-                    <option>29 | ROSTOV</option>
-                    <option>30 | ANAPA</option>
-                    <option>31 | EKB</option>
-                    <option>32 | KRASNODAR</option>
-                    <option>33 | ARZAMAS</option>
-                    <option>34 | NOVOSIB</option>
-                    <option>35 | GROZNY</option>
-                    <option>36 | SARATOV</option>
-                    <option>37 | OMSK</option>
-                    <option>38 | IRKUTSK</option>
-                    <option>39 | VOLGOGRAD</option>
-                    <option>40 | VORONEZH</option>
-                    <option>41 | BELGOROD</option>
-                    <option>42 | MAKHACHKALA</option>
-                    <option>43 | VLADIKAVKAZ</option>
-                    <option>44 | VLADIVOSTOK</option>
-                    <option>45 | KALININGRAD</option>
-                    <option>46 | CHELYABINSK</option>
-                    <option>47 | KRASNOYARSK</option>
-                    <option>48 | CHEBOKSARY</option>
-                    <option>49 | KHABAROVSK</option>
-                    <option>50 | PERM</option>
-                    <option>51 | TULA</option>
-                    <option>52 | RYAZAN</option>
-                    <option>53 | MURMANSK</option>
-                    <option>54 | PENZA</option>
-                    <option>55 | KURSK</option>
-                    <option>56 | ARKHANGELSK</option>
-                    <option>57 | ORENBURG</option>
-                    <option>58 | KIROV</option>
-                    <option>59 | KEMEROVO</option>
-                    <option>60 | TYUMEN</option>
-                    <option>61 | TOLYATTI</option>
-                    <option>62 | IVANOVO</option>
-                    <option>63 | STAVROPOL</option>
-                    <option>64 | SMOLENSK</option>
-                    <option>65 | PSKOV</option>
-                    <option>66 | BRYANSK</option>
-                    <option>67 | OREL</option>
-                    <option>68 | YAROSLAVL</option>
-                    <option>69 | BARNAUL</option>
-                    <option>70 | LIPETSK</option>
-                    <option>71 | ULYANOVSK</option>
-                    <option>72 | YAKUTSK</option>
-                    <option>73 | TAMBOV</option>
-                    <option>74 | BRATSK</option>
-                    <option>75 | ASTRAKHAN</option>
-                    <option>76 | CHITA</option>
-                    <option>77 | KOSTROMA</option>
-                    <option>78 | VLADIMIR</option>
-                    <option>79 | KALUGA</option>
-                    <option>80 | NOVGOROD</option>
-                    <option>81 | TAGANROG</option>
-                    <option>82 | VOLOGDA</option>
-                    <option>83 | TVER</option>
-                    <option>84 | TOMSK</option>
-                    <option>85 | IZHEVSK</option>
-                    <option>86 | SURGUT</option>
-                    <option>87 | PODOLSK</option>
-                    <option>88 | MAGADAN</option>
-                    <option>89 | CHEREPOVETS</option>
-                    <option>90 | NORILSK</option>
-                    <option>91 | ASTANA</option>
-                </select>
+                <div class="server-value" id="serverValue">01 | RED</div>
             </div>
+            <span class="arrow">▼</span>
         </div>
+
+        <input type="hidden" id="server" value="01 | RED">
 
         <button class="main-btn" onclick="login()">ВОЙТИ В АККАУНТ →</button>
 
         <div class="divider">или</div>
 
         <button class="row-btn" onclick="goTo('recover.html')">
-            <span class="row-icon">🔒</span>
+            <span class="row-icon red">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+            </span>
             <span class="row-text">ВОССТАНОВЛЕНИЕ АККАУНТА</span>
             <span class="row-arrow">›</span>
         </button>
 
         <button class="row-btn" onclick="goTo('register.html')">
-            <span class="row-icon">📄</span>
+            <span class="row-icon red">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+            </span>
             <span class="row-text">СОЗДАТЬ НОВЫЙ АККАУНТ</span>
             <span class="row-arrow">›</span>
         </button>
@@ -180,7 +103,106 @@
             <a href="https://blackrussia.online/" target="_blank">О ПРОЕКТЕ</a>
         </div>
 
-        <a href="support.html" class="support-link">🆘 СЛУЖБА ПОДДЕРЖКИ</a>
+        <a href="support.html" class="support-link">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px;display:inline-block;vertical-align:middle;margin-right:6px;"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="4"/></svg>
+            СЛУЖБА ПОДДЕРЖКИ
+        </a>
+    </div>
+
+    <div class="server-dropdown" id="serverDropdown">
+        <div class="server-close" onclick="toggleServerList()">✕</div>
+        <div class="server-title">ВЫБОР СЕРВЕРА</div>
+        <div class="server-option" onclick="selectServer('01 | RED')">01 | RED</div>
+        <div class="server-option" onclick="selectServer('02 | GREEN')">02 | GREEN</div>
+        <div class="server-option" onclick="selectServer('03 | BLUE')">03 | BLUE</div>
+        <div class="server-option" onclick="selectServer('04 | YELLOW')">04 | YELLOW</div>
+        <div class="server-option" onclick="selectServer('05 | ORANGE')">05 | ORANGE</div>
+        <div class="server-option" onclick="selectServer('06 | PURPLE')">06 | PURPLE</div>
+        <div class="server-option" onclick="selectServer('07 | LIME')">07 | LIME</div>
+        <div class="server-option" onclick="selectServer('08 | PINK')">08 | PINK</div>
+        <div class="server-option" onclick="selectServer('09 | CHERRY')">09 | CHERRY</div>
+        <div class="server-option" onclick="selectServer('10 | BLACK')">10 | BLACK</div>
+        <div class="server-option" onclick="selectServer('11 | INDIGO')">11 | INDIGO</div>
+        <div class="server-option" onclick="selectServer('12 | WHITE')">12 | WHITE</div>
+        <div class="server-option" onclick="selectServer('13 | MAGENTA')">13 | MAGENTA</div>
+        <div class="server-option" onclick="selectServer('14 | CRIMSON')">14 | CRIMSON</div>
+        <div class="server-option" onclick="selectServer('15 | GOLD')">15 | GOLD</div>
+        <div class="server-option" onclick="selectServer('16 | AZURE')">16 | AZURE</div>
+        <div class="server-option" onclick="selectServer('17 | PLATINUM')">17 | PLATINUM</div>
+        <div class="server-option" onclick="selectServer('18 | AQUA')">18 | AQUA</div>
+        <div class="server-option" onclick="selectServer('19 | GRAY')">19 | GRAY</div>
+        <div class="server-option" onclick="selectServer('20 | ICE')">20 | ICE</div>
+        <div class="server-option" onclick="selectServer('21 | CHILLI')">21 | CHILLI</div>
+        <div class="server-option" onclick="selectServer('22 | CHOCO')">22 | CHOCO</div>
+        <div class="server-option" onclick="selectServer('23 | MOSCOW')">23 | MOSCOW</div>
+        <div class="server-option" onclick="selectServer('24 | SPB')">24 | SPB</div>
+        <div class="server-option" onclick="selectServer('25 | UFA')">25 | UFA</div>
+        <div class="server-option" onclick="selectServer('26 | SOCHI')">26 | SOCHI</div>
+        <div class="server-option" onclick="selectServer('27 | KAZAN')">27 | KAZAN</div>
+        <div class="server-option" onclick="selectServer('28 | SAMARA')">28 | SAMARA</div>
+        <div class="server-option" onclick="selectServer('29 | ROSTOV')">29 | ROSTOV</div>
+        <div class="server-option" onclick="selectServer('30 | ANAPA')">30 | ANAPA</div>
+        <div class="server-option" onclick="selectServer('31 | EKB')">31 | EKB</div>
+        <div class="server-option" onclick="selectServer('32 | KRASNODAR')">32 | KRASNODAR</div>
+        <div class="server-option" onclick="selectServer('33 | ARZAMAS')">33 | ARZAMAS</div>
+        <div class="server-option" onclick="selectServer('34 | NOVOSIB')">34 | NOVOSIB</div>
+        <div class="server-option" onclick="selectServer('35 | GROZNY')">35 | GROZNY</div>
+        <div class="server-option" onclick="selectServer('36 | SARATOV')">36 | SARATOV</div>
+        <div class="server-option" onclick="selectServer('37 | OMSK')">37 | OMSK</div>
+        <div class="server-option" onclick="selectServer('38 | IRKUTSK')">38 | IRKUTSK</div>
+        <div class="server-option" onclick="selectServer('39 | VOLGOGRAD')">39 | VOLGOGRAD</div>
+        <div class="server-option" onclick="selectServer('40 | VORONEZH')">40 | VORONEZH</div>
+        <div class="server-option" onclick="selectServer('41 | BELGOROD')">41 | BELGOROD</div>
+        <div class="server-option" onclick="selectServer('42 | MAKHACHKALA')">42 | MAKHACHKALA</div>
+        <div class="server-option" onclick="selectServer('43 | VLADIKAVKAZ')">43 | VLADIKAVKAZ</div>
+        <div class="server-option" onclick="selectServer('44 | VLADIVOSTOK')">44 | VLADIVOSTOK</div>
+        <div class="server-option" onclick="selectServer('45 | KALININGRAD')">45 | KALININGRAD</div>
+        <div class="server-option" onclick="selectServer('46 | CHELYABINSK')">46 | CHELYABINSK</div>
+        <div class="server-option" onclick="selectServer('47 | KRASNOYARSK')">47 | KRASNOYARSK</div>
+        <div class="server-option" onclick="selectServer('48 | CHEBOKSARY')">48 | CHEBOKSARY</div>
+        <div class="server-option" onclick="selectServer('49 | KHABAROVSK')">49 | KHABAROVSK</div>
+        <div class="server-option" onclick="selectServer('50 | PERM')">50 | PERM</div>
+        <div class="server-option" onclick="selectServer('51 | TULA')">51 | TULA</div>
+        <div class="server-option" onclick="selectServer('52 | RYAZAN')">52 | RYAZAN</div>
+        <div class="server-option" onclick="selectServer('53 | MURMANSK')">53 | MURMANSK</div>
+        <div class="server-option" onclick="selectServer('54 | PENZA')">54 | PENZA</div>
+        <div class="server-option" onclick="selectServer('55 | KURSK')">55 | KURSK</div>
+        <div class="server-option" onclick="selectServer('56 | ARKHANGELSK')">56 | ARKHANGELSK</div>
+        <div class="server-option" onclick="selectServer('57 | ORENBURG')">57 | ORENBURG</div>
+        <div class="server-option" onclick="selectServer('58 | KIROV')">58 | KIROV</div>
+        <div class="server-option" onclick="selectServer('59 | KEMEROVO')">59 | KEMEROVO</div>
+        <div class="server-option" onclick="selectServer('60 | TYUMEN')">60 | TYUMEN</div>
+        <div class="server-option" onclick="selectServer('61 | TOLYATTI')">61 | TOLYATTI</div>
+        <div class="server-option" onclick="selectServer('62 | IVANOVO')">62 | IVANOVO</div>
+        <div class="server-option" onclick="selectServer('63 | STAVROPOL')">63 | STAVROPOL</div>
+        <div class="server-option" onclick="selectServer('64 | SMOLENSK')">64 | SMOLENSK</div>
+        <div class="server-option" onclick="selectServer('65 | PSKOV')">65 | PSKOV</div>
+        <div class="server-option" onclick="selectServer('66 | BRYANSK')">66 | BRYANSK</div>
+        <div class="server-option" onclick="selectServer('67 | OREL')">67 | OREL</div>
+        <div class="server-option" onclick="selectServer('68 | YAROSLAVL')">68 | YAROSLAVL</div>
+        <div class="server-option" onclick="selectServer('69 | BARNAUL')">69 | BARNAUL</div>
+        <div class="server-option" onclick="selectServer('70 | LIPETSK')">70 | LIPETSK</div>
+        <div class="server-option" onclick="selectServer('71 | ULYANOVSK')">71 | ULYANOVSK</div>
+        <div class="server-option" onclick="selectServer('72 | YAKUTSK')">72 | YAKUTSK</div>
+        <div class="server-option" onclick="selectServer('73 | TAMBOV')">73 | TAMBOV</div>
+        <div class="server-option" onclick="selectServer('74 | BRATSK')">74 | BRATSK</div>
+        <div class="server-option" onclick="selectServer('75 | ASTRAKHAN')">75 | ASTRAKHAN</div>
+        <div class="server-option" onclick="selectServer('76 | CHITA')">76 | CHITA</div>
+        <div class="server-option" onclick="selectServer('77 | KOSTROMA')">77 | KOSTROMA</div>
+        <div class="server-option" onclick="selectServer('78 | VLADIMIR')">78 | VLADIMIR</div>
+        <div class="server-option" onclick="selectServer('79 | KALUGA')">79 | KALUGA</div>
+        <div class="server-option" onclick="selectServer('80 | NOVGOROD')">80 | NOVGOROD</div>
+        <div class="server-option" onclick="selectServer('81 | TAGANROG')">81 | TAGANROG</div>
+        <div class="server-option" onclick="selectServer('82 | VOLOGDA')">82 | VOLOGDA</div>
+        <div class="server-option" onclick="selectServer('83 | TVER')">83 | TVER</div>
+        <div class="server-option" onclick="selectServer('84 | TOMSK')">84 | TOMSK</div>
+        <div class="server-option" onclick="selectServer('85 | IZHEVSK')">85 | IZHEVSK</div>
+        <div class="server-option" onclick="selectServer('86 | SURGUT')">86 | SURGUT</div>
+        <div class="server-option" onclick="selectServer('87 | PODOLSK')">87 | PODOLSK</div>
+        <div class="server-option" onclick="selectServer('88 | MAGADAN')">88 | MAGADAN</div>
+        <div class="server-option" onclick="selectServer('89 | CHEREPOVETS')">89 | CHEREPOVETS</div>
+        <div class="server-option" onclick="selectServer('90 | NORILSK')">90 | NORILSK</div>
+        <div class="server-option" onclick="selectServer('91 | ASTANA')">91 | ASTANA</div>
     </div>
 
     <script src="script.js"></script>
