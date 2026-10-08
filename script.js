@@ -193,7 +193,10 @@ function showSuccess(text, nick, server, type) {
 
 // === НАВИГАЦИЯ ===
 function goTo(page) { window.location.href = page; }
-function validateNick(nick) { return /^[A-Z][a-z]+_[A-Z][a-z]+$/.test(nick) && nick.length >= 5; }
+
+function validateNick(nick) {
+    return /^[A-Z][a-z]+_[A-Z][a-z]+$/.test(nick) && nick.length >= 5;
+}
 
 // === ВЫПАДАЮЩИЙ СПИСОК СЕРВЕРОВ ===
 function toggleServerList() {
@@ -246,7 +249,7 @@ function register() {
     const referrer = document.getElementById('referrer').value.trim();
 
     if (!nick) { alert('Введите ник!'); return; }
-    if (!validateNick(nick)) { alert('Ник в формате Nick_Name!'); return; }
+    if (!validateNick(nick)) { alert('Ник в формате Ivan_Capone (минимум 5 символов, только буквы)!'); return; }
     if (!password) { alert('Введите пароль!'); return; }
 
     const data = (
