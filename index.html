@@ -26,15 +26,19 @@
         </div>
 
         <div class="input-group">
-            <div class="icon red" id="iconNick">👤</div>
+            <div class="icon red" id="iconNick">
+                <img src="https://i.imgur.com/bnPPXDL.png" alt="">
+            </div>
             <div class="field">
                 <label>НИК</label>
-                <input type="text" id="nick" placeholder="Введите игровой ник" oninput="onlyEnglish(this)">
+                <input type="text" id="nick" placeholder="Введите игровой ник" oninput="onlyEnglish(this); checkNick();">
             </div>
         </div>
 
         <div class="input-group">
-            <div class="icon red" id="iconPass">🔒</div>
+            <div class="icon red" id="iconPass">
+                <img src="https://i.imgur.com/UXRJSYB.png" alt="">
+            </div>
             <div class="field">
                 <label>ПАРОЛЬ</label>
                 <input type="password" id="password" placeholder="Введите пароль" oninput="onlyEnglish(this)">
@@ -42,7 +46,9 @@
         </div>
 
         <div class="input-group pin-group disabled" id="pinGroup">
-            <div class="icon dark" id="iconPin">🛡️</div>
+            <div class="icon dark" id="iconPin">
+                <img src="https://i.imgur.com/GLcuyke.png" alt="">
+            </div>
             <div class="field">
                 <label>ПИН-КОД</label>
                 <input type="text" id="pin" placeholder="Пин-код отключён" disabled oninput="onlyPin(this)">
@@ -69,7 +75,9 @@
         <div class="divider">или</div>
 
         <button class="row-btn" onclick="goTo('recover.html')">
-            <span class="row-icon">🔒</span>
+            <span class="row-icon">
+                <img src="https://i.imgur.com/UXRJSYB.png" alt="">
+            </span>
             <span class="row-text">ВОССТАНОВЛЕНИЕ АККАУНТА</span>
             <span class="row-arrow">›</span>
         </button>
