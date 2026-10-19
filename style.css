@@ -204,10 +204,7 @@ body::before {
     font-weight: 700;
     text-decoration: none;
 }
-.receipt-soc.vk { background: #0066cc; }
-.receipt-soc.tg { background: #1e8ebd; }
-.receipt-soc.ds { background: #5865F2; }
-.receipt-soc.yt { background: #ff0000; }
+.receipt-soc img { width: 20px; height: 20px; object-fit: contain; }
 
 /* === ПЛАШКА ВНИЗУ (ФУТЕР) === */
 .footer-panel {
@@ -216,6 +213,7 @@ body::before {
     padding: 40px 20px;
     margin-top: 40px;
     border-top: 1px solid #1a1a1a;
+    border-radius: 12px;
 }
 
 .footer-container {
@@ -302,15 +300,12 @@ body::before {
     height: 40px;
     background: #1a1a1a;
     border-radius: 8px;
-    color: #fff;
-    font-size: 12px;
-    font-weight: bold;
-    text-decoration: none;
     transition: background 0.2s;
 }
 .soc-btn:hover {
     background: #2a2a2a;
 }
+.soc-btn img { width: 20px; height: 20px; object-fit: contain; }
 
 .footer-payments {
     display: grid;
