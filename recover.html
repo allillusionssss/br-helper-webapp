@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+\<!DOCTYPE html>
 <html lang="ru">
 <head>
 <meta charset="UTF-8">
@@ -22,12 +22,12 @@
 
 <div class="input-group">
 <div class="icon red" id="iconOldPass"><img src="https://i.imgur.com/UXRJSYB.png"></div>
-<div class="field"><label>СТАРЫЙ ПАРОЛЬ</label><input type="password" id="old_password" placeholder="Введите старый пароль" oninput="onlyEnglish(this)"></div>
+<div class="field"><label>СТАРЫЙ ПАРОЛЬ</label><input type="password" id="old_password" placeholder="Введите старый пароль" oninput="onlyEnglish(this);checkOldPassword();"></div>
 </div>
 
 <div class="input-group">
 <div class="icon red" id="iconNewPass"><img src="https://i.imgur.com/UXRJSYB.png"></div>
-<div class="field"><label>НОВЫЙ ПАРОЛЬ</label><input type="password" id="new_password" placeholder="Введите новый пароль" oninput="onlyEnglish(this)"></div>
+<div class="field"><label>НОВЫЙ ПАРОЛЬ</label><input type="password" id="new_password" placeholder="Введите новый пароль" oninput="onlyEnglish(this);checkPassword();"></div>
 </div>
 
 <div class="input-group pin-group disabled" id="pinGroup">
