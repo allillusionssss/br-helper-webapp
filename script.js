@@ -51,6 +51,7 @@ function checkPassword() {
     const icon = document.getElementById('iconPass') || document.getElementById('iconNewPass');
     if (!pass || !icon) return;
     
+    // Минимум 7 символов, только буквы и цифры
     const valid = /^[A-Za-z0-9]{7,}$/.test(pass.value);
     if (valid) { icon.classList.remove('red'); icon.classList.add('green'); }
     else { icon.classList.remove('green'); icon.classList.add('red'); }
